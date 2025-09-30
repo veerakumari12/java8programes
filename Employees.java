@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Employees{
@@ -118,10 +119,10 @@ public class Employees{
         Long maile=EmployeesList.stream().filter(e->e.getGender().equalsIgnoreCase("Male")).count();
         System.out.println(maile); // only mail ,we need femail cjust chage the filter condition
         EmployeesList.stream().collect(Collectors.groupingBy(Employees::getGender,Collectors.counting()) );
-        System.out.println(EmployeesList.stream().collect(Collectors.groupingBy(Employees::getGender,Collectors.counting()) ));
+        System.out.println("How many male and female employees are there in the organization"+EmployeesList.stream().collect(Collectors.groupingBy(Employees::getGender,Collectors.counting()) ));
 
         //print the name of all department in the organization
-        EmployeesList.stream().map(e->e.getDepartment()).distinct().forEach(x->System.out.println(x));
+        EmployeesList.stream().map(Employees::getDepartment).distinct().forEach(x->System.out.println(x));
 
 
         // what is the average age of male and female employees?
@@ -130,6 +131,10 @@ public class Employees{
 
         //Get the details of highest paid empployee in the organization
         EmployeesList.stream().sorted(Comparator.comparing(Employees::getSalary).reversed());
+       Optional<Employees> maxsal= EmployeesList.stream().collect(Collectors.maxBy(Comparator.comparing(Employees::getSalary)));
+        if(maxsal.isPresent()){
+            System.out.println(maxsal.get());
+        }
         System.out.println(EmployeesList.stream().sorted(Comparator.comparing(Employees::getSalary).reversed()).findFirst().get());
         //2nd higest
         System.out.println(EmployeesList.stream().sorted(Comparator.comparing(Employees::getSalary).reversed()).skip(1).findFirst().get());
@@ -148,6 +153,10 @@ public class Employees{
         EmployeesList.stream().sorted(Comparator.comparing(Employees::getAge))
                 .filter(e->e.getGender().equalsIgnoreCase("Male"))
                 .filter(e->e.getDepartment().equalsIgnoreCase("Development")).collect(Collectors.toList());
+
+        EmployeesList.stream()
+                .filter(e->e.getGender().equalsIgnoreCase("Male"))
+                .filter(e->e.getDepartment().equalsIgnoreCase("Development")).collect(Collectors.minBy(Comparator.comparing(Employees::getAge)));
         System.out.println( EmployeesList.stream().sorted(Comparator.comparing(Employees::getAge))
                 .filter(e->e.getGender().equalsIgnoreCase("Male"))
                 .filter(e->e.getDepartment().equalsIgnoreCase("Development")).findFirst().get());
@@ -171,6 +180,23 @@ public class Employees{
 //List down the name of all employee in each dept
 
         EmployeesList.stream().collect(Collectors.groupingBy(Employees::getDepartment,Collectors.mapping(Employees::getName,Collectors.toList())));
+        System.out.println(EmployeesList.stream().collect(Collectors.groupingBy(Employees::getDepartment,Collectors.mapping(Employees::getName,Collectors.toList()))));
+
+
+//what is the average salary  and total salary of the whole organization
+        EmployeesList.stream().mapToDouble(Employees::getSalary).average();
+        EmployeesList.stream().mapToDouble(Employees::getSalary).sum();
+        // separate the employees who are younger or equal to 25 years from those employees who are older than 25 years?
+        EmployeesList.stream().filter(e->e.getAge()>=25).forEach(x->System.out.println(x));
+        EmployeesList.stream().filter(e->e.getAge()<=25).forEach(x->System.out.println(x));
+
+
+        // who is the oldest employee in the organization ?what is  his age and which department he belongs to?
+        EmployeesList.stream().sorted(Comparator.comparing(Employees::getAge).reversed()).findFirst().get();
+        System.out.println(EmployeesList.stream().sorted(Comparator.comparing(Employees::getAge).reversed()).map(Employees::getDepartment).findFirst().get());
+
+
+
 
 
 
